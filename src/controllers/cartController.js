@@ -5,7 +5,7 @@ const cartModel = require("../models/cartModel")
 
 //------------------ CREATING CART
 const createCart = async (req,res)=>{
-    res.send({msg:"hii"})
+    res.send({message:"hii"})
 
 
 };
@@ -13,14 +13,14 @@ const createCart = async (req,res)=>{
 
 //------------------ GETTING CART BY ID
 const updateCartById = async (req,res)=>{
-    res.send({msg:"hii"})
+    res.send({message:"hii"})
 
 
 };
 
 //------------------ GETTING CART BY ID
 const getCartById = async (req,res)=>{
-    res.send({msg:"hii"})
+    res.send({message:"hii"})
 
 
 };
@@ -29,7 +29,7 @@ const getCartById = async (req,res)=>{
 
 //------------------ UPDATING CART
 const deleteCartById = async (req,res)=>{
-    res.send({msg:"hii"})
+    res.send({message:"hii"})
 
 
 };
