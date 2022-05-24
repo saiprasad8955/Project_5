@@ -4,23 +4,23 @@ const cartModel = require("../models/cartModel")
 
 
 //------------------ CREATING CART
-const createCart = async (req,res)=>{
-    res.send({message:"hii"})
+const createCart = async (req, res) => {
+    res.send({ message: "hii" })
 
 
 };
 
 
 //------------------ GETTING CART BY ID
-const updateCartById = async (req,res)=>{
-    res.send({message:"hii"})
+const updateCartById = async (req, res) => {
+    res.send({ message: "hii" })
 
 
 };
 
 //------------------ GETTING CART BY ID
-const getCartById = async (req,res)=>{
-    res.send({message:"hii"})
+const getCartById = async (req, res) => {
+    res.send({ message: "hii" })
 
 
 };
@@ -28,14 +28,14 @@ const getCartById = async (req,res)=>{
 
 
 //------------------ UPDATING CART
-const deleteCartById = async (req,res)=>{
-    res.send({message:"hii"})
+const deleteCartById = async (req, res) => {
+    res.send({ message: "hii" })
 
 
 };
 
 
-module.exports = { 
+module.exports = {
     createCart,
     updateCartById,
     getCartById,
