@@ -21,16 +21,14 @@ const isValidString = function (value) {
 }
 
 const isValidEmail = function (value) {
-    // if (!(/^[a-z0-9+_.-]+@[a-z0-9.-]+$/.test(value.trim()))) {
-    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value.trim())) {
+    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
         return false
     }
     return true
 }
 
 const isValidNumber = function (value) {
-    // if (!(/^(?:(?:\+|0{0,2})91(\s*[\ -]\s*)?|[0]?)?[789]\d{9}|(\d[ -]?){10}\d$/.test(value.trim()))) {
-    if (!(/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/.test(value.trim()))) {
+    if (!(/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/.test(value))) {
 
         return false
     }
@@ -38,28 +36,28 @@ const isValidNumber = function (value) {
 }
 
 const isValidName = function (value) {
-    if (!(/^[A-Za-z ]+$/.test(value.trim()))) {
+    if (!(/^[A-Za-z ]+$/.test(value))) {
         return false
     }
     return true
 }
 
 const isValidPassword = function (value) {
-    if (!(/^[a-zA-Z0-9'@&#.\s]{8,15}$/.test(value.trim()))) {
+    if (!(/^[a-zA-Z0-9'@&#.\s]{8,15}$/.test(value))) {
         return false
     }
     return true
 }
 
 const isValidPincode = function (value) {
-    if (!(/^[1-9]{1}[0-9]{2}[0-9]{3}$/.test(value.trim()))) {
+    if (!(/^[1-9]{1}[0-9]{2}[0-9]{3}$/.test(value))) {
         return false
     }
     return true
 }
 
 const isValidPrice = function (value) {
-    if (!/^[0-9]+$/.test(value.trim())) {
+    if (!/^[0-9]+$/.test(value)) {
         return false
     }
     return true
