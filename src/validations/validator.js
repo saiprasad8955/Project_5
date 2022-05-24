@@ -9,13 +9,11 @@ const isValid = (value)=>{
 }
 
 
-
-const isValid2 = (value) => {
+const isValidString = (value) => {
     const dv = /[a-zA-Z]/ 
     if (dv.test(value) === false) return false;
     return true;
 }
-
 
 
 const isValidRequestBody = (body)=>{
@@ -23,11 +21,9 @@ const isValidRequestBody = (body)=>{
 }
 
 
-
 const isValidEmail = (email)=>{
     return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
 }
-
 
 
 const isValidPincode = (pincode)=>{
@@ -38,12 +34,10 @@ const isValidPincode = (pincode)=>{
 }
 
 
-
 const isValidPassword = (pass)=>{
     if (password.length > 15 || password.length < 8) return false ; 
     return true ;
 }
-
 
 
 const isValidPhone = (phone)=>{
@@ -51,11 +45,9 @@ const isValidPhone = (phone)=>{
 }
 
 
-
 const isValidObjectId = (objectId)=> {
     return mongoose.Types.ObjectId.isValid(objectId);
   };
-
 
 
 const isValidURL = (url)=> {
@@ -63,16 +55,14 @@ return (/^(ftp|http|https):\/\/[^ "]+$/).test(url);
 }
 
 
-
 const isValidImage = (image)=>{
     if((/.*\.(jpeg|jpg|png)$/).test(image.originalname)) return true;
     return false
 }
 
-
 module.exports = {
     isValid,
-    isValid2,
+    isValidString,
     isValidEmail,
     isValidImage,
     isValidObjectId,
