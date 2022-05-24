@@ -1,62 +1,21 @@
-//const cartModel = require("../models/cartModel")
-const aws = require('aws-sdk')
+
 const validator = require('../validations/validator')
 const UserModel = require('../models/userModel')
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
-
-/////////////////////////  Aws s3 -- Connection ////////////////////////////////////////////////
-
-
-
-aws.config.update({
-    accessKeyId: "AKIAY3L35MCRUJ6WPO6J",  // id
-    secretAccessKey: "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",  // secret password
-    region: "ap-south-1"
-});
-
-
-// this function uploads file to AWS and gives back the url for the file
-let uploadFile = async (file) => {
-    return new Promise(function (resolve, reject) {
-
-        let s3 = new aws.S3({ apiVersion: "2006-03-01" });
-        var uploadParams = {
-            ACL: "public-read",
-            Bucket: "classroom-training-bucket", // HERE
-            Key: "group8/profileImages/" + file.originalname, // HERE    
-            Body: file.buffer,
-        };
-
-        s3.upload(uploadParams, function (err, data) {
-            if (err) {
-                return reject({ "error": err });
-            }
-            console.log(data)
-            console.log("File uploaded successfully.");
-            return resolve(data.Location); //HERE 
-        });
-    });
-};
-
-
-
-
-
+const { uploadFile } = require('../AWS_Upload/aws_s3')
+const jwt = require('jsonwebtoken')
 
 /////////////////////////////////  CREATING USER  /////////////////////////////////////////////
 
 
-const createUser = async (req, res) => {
+const createUser = async function (req, res) {
     try {
         const body = req.body
-
         // const body = req.body.data;
         // const JSONbody = JSON.parse(body)
 
-
         //Validate body 
-
         if (!validator.isValidBody(body)) {
             return res.status(400).send({ status: false, msg: "User body should not be empty" });
         }
@@ -74,7 +33,7 @@ const createUser = async (req, res) => {
         }
 
 
-        const { fname, lname, email, password, phone, address } = body
+        let { fname, lname, email, password, phone, address } = body
 
         // Validate fname
         if (!validator.isValid(fname)) {
@@ -113,7 +72,7 @@ const createUser = async (req, res) => {
 
         // Validation of password
         if (!validator.isValidPassword(password)) {
-            return res.status(400).send({ status: false, message: "Invalid password" })
+            return res.status(400).send({ status: false, message: "Password should be 8-15 characters long and must contain one of 0-9,A-Z,a-z and special characters" })
         }
 
         // Validate phone
@@ -125,6 +84,8 @@ const createUser = async (req, res) => {
         if (!validator.isValidNumber(phone)) {
             return res.status(400).send({ status: false, msg: "Invalid phone number" })
         }
+
+        address = JSON.parse(address);
 
         // Validate address
         if (!validator.isValid(address)) {
@@ -172,8 +133,9 @@ const createUser = async (req, res) => {
         let files = req.files;
 
         if (files && files.length > 0) {
+
+            if (!validator.isValidImage(files[0])) { return res.status(400).send({ status: false, message: "Invalid Image type" }) }
             let uploadedFileURL = await uploadFile(files[0]);
-            // res.status(201).send({ status: true,msg: "file uploaded succesfully", data: uploadedFileURL });
 
             // encrypted password
             const encryptPassword = await bcrypt.hash(password, 10)
@@ -185,7 +147,7 @@ const createUser = async (req, res) => {
             return res.status(201).send({ status: true, message: "User created successfully", data: savedData })
         }
         else {
-            return res.status(400).send({ status: false, msg: "No file to write" });
+            return res.status(400).send({ status: false, msg: "No User Profile file to write" });
         }
 
     }
@@ -303,12 +265,16 @@ const getUserById = async (req, res) => {
 
         let userId = req.params.userId
 
-        if (req.user.userId != params.userId) {
-            return res.status(401).send({ status: false, msg: "UserId doesnot match" })
+        if (!validator.isValidobjectId(userId)) {
+            return res.status(400).send({ status: false, msg: "UserId is Not Vaild" })
         }
 
         let findUser = await UserModel.findOne({ _id: userId })
-        if (findUser) {
+        if (!findUser) {
+            return res.status(404).send({ status: false, msg: "User Not Found with this ID" })
+
+        }
+        else {
             return res.status(200).send({ status: true, msg: "User profile details", data: findUser })
         }
 

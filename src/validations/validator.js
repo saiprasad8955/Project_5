@@ -89,6 +89,10 @@ const isValidStatus = function (value) {
     return ["pending", "completed", "cancelled"].indexOf(value) !== -1
 }
 
+const isValidImage = (image) => {
+    if ((/.*\.(jpeg|jpg|png)$/).test(image.originalname)) return true;
+    return false
+}
 
 
 module.exports = {
@@ -107,5 +111,6 @@ module.exports = {
     isvalidCurrencyId,
     isvalidCurrencyFormat,
     isValidremoveProduct,
-    isValidStatus
+    isValidStatus,
+    isValidImage
 }
