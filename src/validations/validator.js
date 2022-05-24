@@ -35,8 +35,9 @@ const isValidPincode = (pincode)=>{
 
 
 const isValidPassword = (pass)=>{
-    if (password.length > 15 || password.length < 8) return false ; 
-    return true ;
+    if (pass.length > 15 || pass.length < 8) return false ; 
+    if(! (/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,15}$/).test(password)) return false;
+    return true;
 }
 
 
