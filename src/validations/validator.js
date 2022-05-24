@@ -1,75 +1,113 @@
-// VALIDATIONS HERE
 const mongoose = require("mongoose")
 
-const isValid = (value)=>{
-    if ( typeof value !== "string") return false;
-    if ( typeof value === "string" && value.trim().length === 0 ) return false;
-    if ( typeof value === "undefined" && typeof value == null ) return false;
+const isValid = function (value) {
+    if (typeof value === 'undefined' || value === null) return false
+    if (typeof value === 'string' && value.trim().length === 0) return false
     return true;
 }
 
 
-const isValidString = (value) => {
-    const dv = /[a-zA-Z]/ 
-    if (dv.test(value) === false) return false;
+const isValidBody = function (requestBody) {
+    return Object.keys(requestBody).length > 0;
+}
+
+const isValidobjectId = (objectId) => {
+    return mongoose.Types.ObjectId.isValid(objectId)
+}
+
+const isValidString = function (value) {
+    if (typeof value === 'string' && value.trim().length === 0) return false
     return true;
 }
 
+const isValidEmail = function (value) {
+    // if (!(/^[a-z0-9+_.-]+@[a-z0-9.-]+$/.test(value.trim()))) {
+    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value.trim())) {
+        return false
+    }
+    return true
+}
 
-const isValidRequestBody = (body)=>{
-    return (Object.getOwnPropertyNames(body).length > 0)
+const isValidNumber = function (value) {
+    // if (!(/^(?:(?:\+|0{0,2})91(\s*[\ -]\s*)?|[0]?)?[789]\d{9}|(\d[ -]?){10}\d$/.test(value.trim()))) {
+    if (!(/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/.test(value.trim()))) {
+
+        return false
+    }
+    return true
+}
+
+const isValidName = function (value) {
+    if (!(/^[A-Za-z ]+$/.test(value.trim()))) {
+        return false
+    }
+    return true
+}
+
+const isValidPassword = function (value) {
+    if (!(/^[a-zA-Z0-9'@&#.\s]{8,15}$/.test(value.trim()))) {
+        return false
+    }
+    return true
+}
+
+const isValidPincode = function (value) {
+    if (!(/^[1-9]{1}[0-9]{2}[0-9]{3}$/.test(value.trim()))) {
+        return false
+    }
+    return true
+}
+
+const isValidPrice = function (value) {
+    if (!/^[0-9]+$/.test(value.trim())) {
+        return false
+    }
+    return true
+}
+
+const isValidSize = function (value) {
+    return ["S", "XS", "M", "X", "L", "XXL", "XL"].indexOf(value) !== -1
+}
+
+const isvalidCurrencyId = function (currencyId) {
+    return ["INR"].indexOf(currencyId) !== -1
+}
+const isvalidCurrencyFormat = function (currencyFormat) {
+    return ["₹"].indexOf(currencyFormat) !== -1
+}
+
+const isvalidNum = function (value) {
+    if (!/^[0-9]+$/.test(value)) {
+        return false
+    }
+    return true
+}
+
+const isValidremoveProduct = function (value) {
+    return [0, 1].indexOf(value) !== -1
+}
+
+const isValidStatus = function (value) {
+    return ["pending", "completed", "cancelled"].indexOf(value) !== -1
 }
 
 
-const isValidEmail = (email)=>{
-    return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email);
-}
-
-
-const isValidPincode = (pincode)=>{
-    const dv = /^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/; 
-    if(typeof pincode !== 'string') return false
-    if(dv.test(pincode)=== false) return false
-    return true;
-}
-
-
-const isValidPassword = (pass)=>{
-    if (pass.length > 15 || pass.length < 8) return false ; 
-    if(! (/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,15}$/).test(password)) return false;
-    return true;
-}
-
-
-const isValidPhone = (phone)=>{
-    return (/^[6-9]\d{9}$/.test(phone))
-}
-
-
-const isValidObjectId = (objectId)=> {
-    return mongoose.Types.ObjectId.isValid(objectId);
-  };
-
-
-const isValidURL = (url)=> {
-return (/^(ftp|http|https):\/\/[^ "]+$/).test(url);
-}
-
-
-const isValidImage = (image)=>{
-    if((/.*\.(jpeg|jpg|png)$/).test(image.originalname)) return true;
-    return false
-}
 
 module.exports = {
     isValid,
+    isValidBody,
+    isValidobjectId,
     isValidString,
     isValidEmail,
-    isValidImage,
-    isValidObjectId,
+    isValidNumber,
+    isValidName,
     isValidPassword,
-    isValidPhone,
     isValidPincode,
-    isValidRequestBody,
-    isValidURL
+    isValidPrice,
+    isValidSize,
+    isvalidNum,
+    isvalidCurrencyId,
+    isvalidCurrencyFormat,
+    isValidremoveProduct,
+    isValidStatus
 }
