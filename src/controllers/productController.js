@@ -68,7 +68,7 @@ const createProduct = async (req, res) => {
 
         // Validate the price 
         if (!validator.isValidPrice(price)) {
-            return res.status(400).send({ status: false, message: `Please Enter Valid Product description` })
+            return res.status(400).send({ status: false, message: `Please Enter Valid Product Price` })
         }
 
         // Check CurrencyID is coming or not
@@ -130,9 +130,72 @@ const createProduct = async (req, res) => {
 
 //------------------ GETTING PRODUCT
 const getProducts = async (req, res) => {
-    
-};
+    // try {
+        // check request params 
+        const reqQuery = JSON.parse(JSON.stringify(req.query));
 
+        // check query coming or not
+        if (!validator.isValidBody(reqQuery)) {
+            return res.status(400).send({ status: false, msg: "Request Params should not be empty" });
+        }
+
+        // Destructure reqQuery
+        const { size, name, priceGreaterThan, priceLessThan, priceSort } = reqQuery
+
+        // create filter Query
+        let filters = { isDeleted: false, deletedAt: null }
+
+        // Check size is valid or not
+        if (size) {
+            if (!validator.isValidSize(size)) {
+                return res.status(400).send({ status: false, message: `Please Enter Valid Product Available Sizes` })
+            }
+            filters.size = { $in: size };
+        }
+
+        // Check name is valid or not
+        if (name) {
+            if (!validator.isValidString(name)) {
+                return res.status(400).send({ status: false, message: `Please Enter Valid Product Name` })
+            }
+            filters.name = { $regex: name, $options: "i" }
+        }
+
+
+        // Check priceGreaterThan is valid or not
+        if (priceGreaterThan || priceLessThan) {
+            if (priceGreaterThan && !validator.isvalidNum(priceGreaterThan)) {
+                return res.status(400).send({ status: false, message: `Please Enter Valid Price Greater Than Field` })
+            }
+
+            // Check name is valid or not
+            if (priceLessThan && !validator.isvalidNum(priceLessThan)) {
+                return res.status(400).send({ status: false, message: `Please Enter Valid Price Less Than Field` })
+            }
+            filters.price = { $gt: priceGreaterThan, $lt: priceLessThan }
+        }
+
+        // check price sort is valid or not
+        let sort = {};
+        if (priceSort) {
+            if (!['-1', '1'].includes(priceSort) || isNaN(priceSort)) {
+                return res.status(400).send({ status: false, message: `Please Enter valid Sorting Field i.e [-1, 1]` })
+            }
+            // set that price in sort object above if all ok
+            sort.price = priceSort
+        }
+
+        console.log(filters);
+
+        // Now get products by caaliing in DB
+        let dataByFilter = await productModel.find(filters).sort(sort)
+        res.status(200).send({ status: true, msg: "Products Fetched Successfully", data: dataByFilter });
+
+    // } catch (err) {
+    //     console.log("This is the error :", err.message)
+    //     res.status(500).send({ msg: "Error", error: err.message })
+    // }
+};
 //------------------ GETTING PRODUCT BY ID
 const getProductsById = async (req, res) => {
     res.send({ message: "hii" })
