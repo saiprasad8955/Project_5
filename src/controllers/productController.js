@@ -102,7 +102,7 @@ const createProduct = async (req, res) => {
         }
 
         //  Validate Installments
-        if (!validator.isvalidNum(installments)) {
+        if (installments && !validator.isvalidNum(installments)) {
             return res.status(400).send({ status: false, message: `Please Enter Valid Product Installments` })
         }
 
@@ -192,7 +192,7 @@ const getProducts = async (req, res) => {
         let sort = {};
         if (priceSort) {
             if (!['-1', '1'].includes(priceSort) || isNaN(priceSort)) {
-                return res.status(400).send({ status: false, message: `Please Enter valid Sorting Field i.e [-1, 1]` })
+                return res.status(400).send({ status: false, message: `Please Enter Valid Sorting Field i.e [-1, 1]` })
             }
             // set that price in sort object above if all ok
             sort.price = priceSort
@@ -200,7 +200,7 @@ const getProducts = async (req, res) => {
 
         // console.log(filters);
 
-        // Now get products by caaliing in DB
+        // Now get products by calling in DB
         let dataByFilter = await productModel.find(filters).sort(sort)
         res.status(200).send({ status: true, msg: "Products Fetched Successfully", data: dataByFilter });
 
@@ -242,7 +242,7 @@ const getProductsById = async (req, res) => {
     }
 };
 
-//------------------ GETTING PRODUCT BY ID
+//------------------ UPDATING PRODUCT BY ID
 const updateProductById = async (req, res) => {
 
     try {
@@ -263,13 +263,13 @@ const updateProductById = async (req, res) => {
 
         // Validate product ID
         if (!validator.isValidobjectId(productId)) {
-            return res.status(404).send({ status: false, message: "productId not found" });
+            return res.status(404).send({ status: false, message: "Product ID Not Valid" });
         }
 
         // Check product exists or not and should not be deleted
         let product = await productModel.findOne({ _id: productId, isDeleted: false });
         if (!product) {
-            return res.status(404).send({ status: false, message: "product not found or has been deleted" });
+            return res.status(404).send({ status: false, message: "Product Not Found or has been deleted" });
         }
 
         // Destructing request body
@@ -348,7 +348,7 @@ const updateProductById = async (req, res) => {
     
             // Update the New Product Image
             let productImageLink = await uploadFile(files[0]);
-            if (!productImageLink) {
+            if (! productImageLink) {
                 return res.status(400).send({ status: false, message: "Error in Uploading the File" });
             }
             updatedProductData.productImage = productImageLink;
@@ -368,7 +368,7 @@ const updateProductById = async (req, res) => {
     }
 };
 
-//------------------ UPDATING CART
+//------------------ DELETING PRODUCT
 const deleteProductById = async (req, res) => {
 
     try {
