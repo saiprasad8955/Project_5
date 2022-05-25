@@ -220,7 +220,7 @@ const loginUser = async (req, res) => {
                     iat: Math.floor(Date.now() / 1000), //issue date
                     exp: Math.floor(Date.now() / 1000) + 60 * 60 //expiry date and time (30*60 = 30 min || 60*60 = 1 hr)
                 }, "Group8")
-                // res.header('x-api-key', Token)
+                res.header('x-api-key', Token)
 
                 return res.status(200).send({ status: true, message: "User login successfull", data: { userId: user._id, token: Token } })
             }
@@ -263,7 +263,14 @@ const getUserById = async (req, res) => {
             return res.status(400).send({ status: false, msg: "Credentials are required" })
         }
 
+
         let userId = req.params.userId
+
+        //   console.log(req.user.userId)
+        //     // if (req.user.userId != params.userId) {
+        //     //     return res.status(401).send({ status: false, msg: "UserId doesnot match" })
+        //     // }
+
 
         if (!validator.isValidobjectId(userId)) {
             return res.status(400).send({ status: false, msg: "UserId is Not Vaild" })
@@ -287,10 +294,157 @@ const getUserById = async (req, res) => {
 
 };
 
-//------------------ UDATING USER BY ID
+///////////////// UDATING USER BY ID ///////////////////////////////////////////////////////////////////////
+
 const updateUserById = async (req, res) => {
+    try {
+        // Validate body
+        const body = req.body
+        if (!validator.isValidBody(body)) {
+            return res.status(400).send({ status: false, msg: "Details must be present to update" })
+        }
+
+        // Validate params
+        userId = req.params.userId
+        if (!validator.isValidobjectId(userId)) {
+            return res.status(400).send({ status: false, msg: `${userId} is invalid` })
+        }
+
+        const userFound = await UserModel.findOne({ _id: userId })
+        if (!userFound) {
+            return res.status(404).send({ status: false, msg: "User does not exist" })
+        }
+
+        // AUTHORISATION
+        // if (userId !== req.user.userId) {
+        //     return res.status(401).send({ status: false, msg: "Unauthorised access" })
+        // }
+
+        let { fname, lname, email, phone, password, address, profileImage } = body;
 
 
+        //Updating the fields
+        let updatedData = {}
+        if (validator.isValid(fname)) {
+            updatedData['fname'] = fname
+        }
+        if (validator.isValid(lname)) {
+            updatedData['lname'] = lname
+        }
+
+        // Updating of email
+        if (validator.isValid(email)) {
+            if (!validator.isValidEmail(email)) {
+                return res.status(400).send({ status: false, msg: "Invalid email id" })
+            }
+
+
+            // Duplicate email
+            const duplicatemail = await UserModel.find({ email: email })
+            if (duplicatemail.length) {
+                return res.status(400).send({ status: false, msg: "email id already exist" })
+            }
+            updatedData['email'] = email
+        }
+
+
+        // Updating of phone
+        if (validator.isValid(phone)) {
+            if (!validator.isValidNumber(phone)) {
+                return res.status(400).send({ status: false, msg: "Invalid phone number" })
+            }
+
+            // Duplicate phone
+            const duplicatePhone = await UserModel.find({ phone: phone })
+            if (duplicatePhone.length) {
+                return res.status(400).send({ status: false, msg: "phone number already exist" })
+            }
+            updatedData['phone'] = phone
+        }
+
+
+        // Updating of password
+        if (password) {
+            if (!validator.isValid(password)) {
+                return res.status(400).send({ status: false, message: 'password is required' })
+            }
+            if (!validator.isValidPassword(password)) {
+                return res.status(400).send({ status: false, message: "Password should be Valid min 8 character and max 15 " })
+            }
+            const encrypt = await bcrypt.hash(password, 10)
+            updatedData['password'] = encrypt
+        }
+
+
+        //Updating the Address
+        if (address) {
+            if (address.shipping) {
+                if (address.shipping.street) {
+                    if (!validator.isValid(address.shipping.street)) {
+                        return res.status(400).send({ status: false, message: 'Please provide street' })
+                    }
+                    updatedData['address.shipping.street'] = address.shipping.street
+                }
+                if (address.shipping.city) {
+                    if (!validator.isValid(address.shipping.city)) {
+                        return res.status(400).send({ status: false, message: 'Please provide city' })
+                    }
+                    updatedData['address.shipping.city'] = address.shipping.city
+                }
+                if (address.shipping.pincode) {
+                    if (typeof address.shipping.pincode !== 'number') {
+                        return res.status(400).send({ status: false, message: 'Please provide pincode' })
+                    }
+                    // Validate shipping pincode
+                    if (!validator.isValidPincode(address.shipping.pincode)) {
+                        return res.status(400).send({ status: false, msg: "Invalid Shipping pincode" })
+                    }
+                    updatedData['address.shipping.pincode'] = address.shipping.pincode
+                }
+            }
+            if (address.billing) {
+                if (address.billing.street) {
+                    if (!validator.isValid(address.billing.street)) {
+                        return res.status(400).send({ status: false, message: 'Please provide street' })
+                    }
+                    updatedData['address.billing.street'] = address.billing.street
+                }
+                if (address.billing.city) {
+                    if (!validator.isValid(address.billing.city)) {
+                        return res.status(400).send({ status: false, message: 'Please provide city' })
+                    }
+                    updatedData['address.billing.city'] = address.billing.city
+                }
+                if (address.billing.pincode) {
+                    if (typeof address.billing.pincode !== 'number') {
+                        return res.status(400).send({ status: false, message: 'Please provide pincode' })
+                    }
+                    // Validate billing pincode
+                    if (!validator.isValidPincode(address.billing.pincode)) {
+                        return res.status(400).send({ status: false, msg: "Invalid billing pincode" })
+                    }
+                    updatedData['address.billing.pincode'] = address.billing.pincode
+                }
+            }
+        }
+        //Updating the Profile Picture
+
+        let files = req.files;
+
+        if (files && files.length > 0) {
+            if (!validator.isValidImage(files[0])) { return res.status(400).send({ status: false, message: "Invalid Image type" }) }
+            let uploadedFileURL = await uploadFile(files[0]);
+            if (uploadedFileURL) {
+                updatedData['profileImage'] = uploadedFileURL
+            }
+        }
+        const updated = await UserModel.findOneAndUpdate({ _id: userId }, updatedData, { new: true })
+        return res.status(201).send({ status: true, data: updated })
+    }
+    catch (err) {
+        console.log("This is the error :", err.message)
+        res.status(500).send({ msg: "Error", error: err.message })
+    }
 
 };
 
