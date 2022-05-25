@@ -17,6 +17,9 @@ const isValidobjectId = (objectId) => {
 
 const isValidString = function (value) {
     if (typeof value === 'string' && value.trim().length === 0) return false
+    if (!(/^[A-Za-z ]+$/.test(value))) {
+        return false
+    }
     return true;
 }
 
@@ -95,6 +98,10 @@ const isValidImage = (image) => {
 }
 
 
+const isValidBoolean = (value) => {
+    return (value === 'true' || value === 'false')
+}
+
 module.exports = {
     isValid,
     isValidBody,
@@ -112,5 +119,6 @@ module.exports = {
     isvalidCurrencyFormat,
     isValidremoveProduct,
     isValidStatus,
-    isValidImage
+    isValidImage,
+    isValidBoolean
 }

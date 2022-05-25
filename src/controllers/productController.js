@@ -1,7 +1,7 @@
-const cartModel = require("../models/cartModel")
 const validator = require("../validations/validator")
 const productModel = require("../models/productModel")
-const { uploadFile } = require('../AWS_Upload/aws_s3')
+const { uploadFile } = require('../AWS_Upload/aws_s3');
+const { is } = require("express/lib/request");
 
 
 //------------------ CREATING PRODUCT
@@ -132,7 +132,7 @@ const createProduct = async (req, res) => {
 const getProducts = async (req, res) => {
 
     try {
-        
+
         // check request params 
         const reqQuery = JSON.parse(JSON.stringify(req.query));
 
@@ -167,21 +167,21 @@ const getProducts = async (req, res) => {
         // Check priceGreaterThan is valid or not
         if (priceGreaterThan || priceLessThan) {
             let filter = {};
-            if(priceGreaterThan){
-                if ( !validator.isvalidNum(priceGreaterThan)) {
+            if (priceGreaterThan) {
+                if (!validator.isvalidNum(priceGreaterThan)) {
                     return res.status(400).send({ status: false, message: `Please Enter Valid Price Greater Than Field` })
                 }
                 filter.$gt = priceGreaterThan
-            
+
             }
-            
-            
+
+
             // Check name is valid or not
-            if(priceLessThan){
+            if (priceLessThan) {
                 if (!validator.isvalidNum(priceLessThan)) {
                     return res.status(400).send({ status: false, message: `Please Enter Valid Price Less Than Field` })
                 }
-                filter.$lt= priceLessThan 
+                filter.$lt = priceLessThan
 
             }
             filters.price = filter;
@@ -209,19 +209,199 @@ const getProducts = async (req, res) => {
         res.status(500).send({ msg: "Error", error: err.message })
     }
 };
+
 //------------------ GETTING PRODUCT BY ID
 const getProductsById = async (req, res) => {
 
+    try {
+
+        // Extract product ID from params
+        let productId = req.params.productId
+
+        // Validate the Product ID
+        if (!validator.isValidobjectId(productId)) {
+            return res.status(400).send({ status: false, message: "Please Provide Valid Product ID" })
+        }
+
+        // Check Product is Exists in Our Database or not
+        let product = await productModel.findById(productId)
+        if (!product) {
+            return res.status(404).send({ status: false, message: "No product with this ID exists" })
+        }
+
+        // Check Product is deleted or not
+        if (product.isDeleted === true) {
+            return res.status(400).send({ status: false, message: "Product is deleted" })
+        }
+
+        return res.status(200).send({ status: true, message: "Product Fetched Successfully", data: product })
+
+    } catch (err) {
+        console.log("This is the error :", err.message)
+        res.status(500).send({ msg: "Error", error: err.message })
+    }
 };
 
 //------------------ GETTING PRODUCT BY ID
 const updateProductById = async (req, res) => {
-    res.send({ message: "hii" })
+
+    try {
+
+        // extract body here
+        let body = JSON.parse(JSON.stringify(req.body));
+
+        // extract product id
+        let productId = req.params.productId;
+
+        // Extract file here to update
+        let files = req.files;
+
+        // Validate the request Body And check file is coming or not
+        if (!(validator.isValidBody(body) || req.hasOwnProperty('files'))) {
+            return res.status(400).send({ Statuss: false, message: "Please give input in request " })
+        }
+
+        // Validate product ID
+        if (!validator.isValidobjectId(productId)) {
+            return res.status(404).send({ status: false, message: "productId not found" });
+        }
+
+        // Check product exists or not and should not be deleted
+        let product = await productModel.findOne({ _id: productId, isDeleted: false });
+        if (!product) {
+            return res.status(404).send({ status: false, message: "product not found or has been deleted" });
+        }
+
+        // Destructing request body
+        let { title, description, price, isFreeShipping, style, availableSizes, installments } = body;
+
+        let updatedProductData = {};
+
+        // Check title is valid or not
+        if (title) {
+            if (!validator.isValidString(title)) {
+                return res.status(400).send({ status: false, message: `Please Enter Valid Product Title` })
+            }
+            updatedProductData.title = title;
+        }
+
+        // Check description is Valid or not
+        if (description) {
+            if (!validator.isValidString(description)) {
+                return res.status(400).send({ status: false, message: `Please Enter Valid Product description` })
+            }
+            updatedProductData.description = description;
+        }
+
+        // Check price is Valid or not
+        if (price) {
+            if (!validator.isvalidNum(price)) {
+                return res.status(400).send({ status: false, message: `Please Enter Valid Product price` })
+            }
+            updatedProductData.price = price;
+        }
+
+        // Check isFreeShipping is Valid or not
+        if (isFreeShipping) {
+
+            if (! validator.isValidBoolean(isFreeShipping)) {
+                return res.status(400).send({ status: false, message: `Please Enter Valid Product isFreeShipping Field` })
+            }
+            updatedProductData.isFreeShipping = isFreeShipping;
+        }
+
+        // Check Style is Valid or not
+        if (style) {
+
+            if (! validator.isValidString(style)) {
+                return res.status(400).send({ status: false, message: `Please Enter Valid Product style` })
+            }
+            updatedProductData.style = style;
+        }
+
+        
+        // Check Available Sizes is Valid or not
+        if (availableSizes) {
+
+            if (! validator.isValidSize(availableSizes)) {
+                return res.status(400).send({ status: false, message: `Please Enter Valid Product Available Sizes` })
+            }
+            updatedProductData.availableSizes = availableSizes;
+        }
+
+        // Check Available Sizes is Valid or not
+        if (installments) {
+
+            if (! validator.isvalidNum(installments)) {
+                return res.status(400).send({ status: false, message: `Please Enter Valid Product Available Sizes` })
+            }
+            updatedProductData.installments = installments;
+        }
+
+        // Finally Now Update the File check file coming or not
+        if (files && files.length > 0) {
+
+            // Check Valid Image Type or not
+            if (!validator.isValidImage(files[0])) {
+                return res.status(400).send({ status: false, message: `Invalid Image Type` })
+            }
+    
+            // Update the New Product Image
+            let productImageLink = await uploadFile(files[0]);
+            if (!productImageLink) {
+                return res.status(400).send({ status: false, message: "Error in Uploading the File" });
+            }
+            updatedProductData.productImage = productImageLink;
+        }
+
+        // Finally Update the Product
+        let upadatedProduct = await productModel.findOneAndUpdate(
+            { _id: productId },
+            { $set: updatedProductData },
+            { new: true });
+    
+        return res.status(200).send({ status: true, message: "Product updated successfully", data: upadatedProduct });
+
+    } catch (err) {
+        console.log("This is the error :", err.message)
+        res.status(500).send({ msg: "Error", error: err.message })
+    }
 };
 
 //------------------ UPDATING CART
 const deleteProductById = async (req, res) => {
-    res.send({ message: "hii" })
+
+    try {
+
+        // Extract product ID from path params
+        let productID = req.params.productId
+
+        // Validate the product ID
+        if (!validator.isValidobjectId(productID)) {
+            return res.status(400).send({ status: false, message: "Please Provide Valid Product ID" })
+        }
+
+        // Check product exists in our database or not 
+        let product = await productModel.findById(productID)
+        if (!product) {
+            return res.status(404).send({ status: false, message: "Product Not Found" })
+        }
+
+        // Check for deleted or not
+        if (product.isDeleted === true) {
+            return res.status(400).send({ status: false, message: "Product Already Deleted" })
+        }
+
+        // Finally delete the Product Now
+        let deletedProduct = await productModel.findByIdAndUpdate(productID, { $set: { isDeleted: true, deletedAt: new Date().toISOString() } }, { new: true })
+        return res.status(200).send({ status: true, message: "Product Deleted Successfully", data: deletedProduct })
+
+    } catch (err) {
+        return res
+            .status(500)
+            .send({ status: false, message: err.message })
+    }
+
 };
 
 
