@@ -130,7 +130,9 @@ const createProduct = async (req, res) => {
 
 //------------------ GETTING PRODUCT
 const getProducts = async (req, res) => {
-    // try {
+
+    try {
+        
         // check request params 
         const reqQuery = JSON.parse(JSON.stringify(req.query));
 
@@ -142,7 +144,7 @@ const getProducts = async (req, res) => {
         // Destructure reqQuery
         const { size, name, priceGreaterThan, priceLessThan, priceSort } = reqQuery
 
-        // create filter Query
+        // Create filter Query
         let filters = { isDeleted: false, deletedAt: null }
 
         // Check size is valid or not
@@ -158,7 +160,7 @@ const getProducts = async (req, res) => {
             if (!validator.isValidString(name)) {
                 return res.status(400).send({ status: false, message: `Please Enter Valid Product Name` })
             }
-            filters.name = { $regex: name, $options: "i" }
+            filters.name = { $regex: name, $options: "i" } // options for case sensitive and regex is for finding one sentence also
         }
 
 
@@ -202,14 +204,14 @@ const getProducts = async (req, res) => {
         let dataByFilter = await productModel.find(filters).sort(sort)
         res.status(200).send({ status: true, msg: "Products Fetched Successfully", data: dataByFilter });
 
-    // } catch (err) {
-    //     console.log("This is the error :", err.message)
-    //     res.status(500).send({ msg: "Error", error: err.message })
-    // }
+    } catch (err) {
+        console.log("This is the error :", err.message)
+        res.status(500).send({ msg: "Error", error: err.message })
+    }
 };
 //------------------ GETTING PRODUCT BY ID
 const getProductsById = async (req, res) => {
-    res.send({ message: "hii" })
+
 };
 
 //------------------ GETTING PRODUCT BY ID
