@@ -164,17 +164,28 @@ const getProducts = async (req, res) => {
 
         // Check priceGreaterThan is valid or not
         if (priceGreaterThan || priceLessThan) {
-            if (priceGreaterThan && !validator.isvalidNum(priceGreaterThan)) {
-                return res.status(400).send({ status: false, message: `Please Enter Valid Price Greater Than Field` })
+            let filter = {};
+            if(priceGreaterThan){
+                if ( !validator.isvalidNum(priceGreaterThan)) {
+                    return res.status(400).send({ status: false, message: `Please Enter Valid Price Greater Than Field` })
+                }
+                filter.$gt = priceGreaterThan
+            
             }
-
+            
+            
             // Check name is valid or not
-            if (priceLessThan && !validator.isvalidNum(priceLessThan)) {
-                return res.status(400).send({ status: false, message: `Please Enter Valid Price Less Than Field` })
+            if(priceLessThan){
+                if (!validator.isvalidNum(priceLessThan)) {
+                    return res.status(400).send({ status: false, message: `Please Enter Valid Price Less Than Field` })
+                }
+                filter.$lt= priceLessThan 
+
             }
-            filters.price = { $gt: priceGreaterThan, $lt: priceLessThan }
+            filters.price = filter;
         }
 
+        // console.log(filters)
         // check price sort is valid or not
         let sort = {};
         if (priceSort) {
@@ -185,7 +196,7 @@ const getProducts = async (req, res) => {
             sort.price = priceSort
         }
 
-        console.log(filters);
+        // console.log(filters);
 
         // Now get products by caaliing in DB
         let dataByFilter = await productModel.find(filters).sort(sort)
