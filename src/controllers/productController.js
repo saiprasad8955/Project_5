@@ -21,7 +21,7 @@ const createProduct = async (req, res) => {
         console.log(files);
         if (files && files.length > 0) {
 
-            if (!validator.isValidImage(files[0].originalname)) {
+            if (!validator.isValidImage(files[0])) {
                 return res.status(400).send({ status: false, message: `Invalid Image Type` })
             }
             else if (files.length == 0) {
@@ -130,7 +130,7 @@ const createProduct = async (req, res) => {
 
 //------------------ GETTING PRODUCT
 const getProducts = async (req, res) => {
-    res.send({ message: "hii" })
+    
 };
 
 //------------------ GETTING PRODUCT BY ID
