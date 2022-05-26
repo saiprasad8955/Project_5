@@ -304,7 +304,7 @@ const updateProductById = async (req, res) => {
         // Check isFreeShipping is Valid or not
         if (isFreeShipping) {
 
-            if (! validator.isValidBoolean(isFreeShipping)) {
+            if (!validator.isValidBoolean(isFreeShipping)) {
                 return res.status(400).send({ status: false, message: `Please Enter Valid Product isFreeShipping Field` })
             }
             updatedProductData.isFreeShipping = isFreeShipping;
@@ -313,17 +313,17 @@ const updateProductById = async (req, res) => {
         // Check Style is Valid or not
         if (style) {
 
-            if (! validator.isValidString(style)) {
+            if (!validator.isValidString(style)) {
                 return res.status(400).send({ status: false, message: `Please Enter Valid Product style` })
             }
             updatedProductData.style = style;
         }
 
-        
+
         // Check Available Sizes is Valid or not
         if (availableSizes) {
 
-            if (! validator.isValidSize(availableSizes)) {
+            if (!validator.isValidSize(availableSizes)) {
                 return res.status(400).send({ status: false, message: `Please Enter Valid Product Available Sizes` })
             }
             updatedProductData.availableSizes = availableSizes;
@@ -332,7 +332,7 @@ const updateProductById = async (req, res) => {
         // Check Available Sizes is Valid or not
         if (installments) {
 
-            if (! validator.isvalidNum(installments)) {
+            if (!validator.isvalidNum(installments)) {
                 return res.status(400).send({ status: false, message: `Please Enter Valid Product Available Sizes` })
             }
             updatedProductData.installments = installments;
@@ -345,7 +345,7 @@ const updateProductById = async (req, res) => {
             if (!validator.isValidImage(files[0])) {
                 return res.status(400).send({ status: false, message: `Invalid Image Type` })
             }
-    
+
             // Update the New Product Image
             let productImageLink = await uploadFile(files[0]);
             if (!productImageLink) {
@@ -359,7 +359,7 @@ const updateProductById = async (req, res) => {
             { _id: productId },
             { $set: updatedProductData },
             { new: true });
-    
+
         return res.status(200).send({ status: true, message: "Product updated successfully", data: upadatedProduct });
 
     } catch (err) {
