@@ -6,7 +6,7 @@ const { is } = require("express/lib/request");
 
 //------------------ CREATING PRODUCT
 const createProduct = async (req, res) => {
-    try {
+    // try {
 
         // Extract data from request body
         let body = JSON.parse(JSON.stringify(req.body));
@@ -66,8 +66,9 @@ const createProduct = async (req, res) => {
             return res.status(400).send({ status: false, message: `Please Enter Product Price` })
         }
 
+        // console.log(typeof price);
         // Validate the price 
-        if (!validator.isValidPrice(price)) {
+        if (! validator.isValidPrice(price)) {
             return res.status(400).send({ status: false, message: `Please Enter Valid Product Price` })
         }
 
@@ -96,10 +97,12 @@ const createProduct = async (req, res) => {
             return res.status(400).send({ status: false, message: `Please Enter Valid Product Style` })
         }
 
+        // console.log(validator.isValidSize(availableSizes))
         // Validate the Available Sizes 
-        if (availableSizes && !validator.isValidSize(availableSizes)) {
+        if (availableSizes && ! validator.isValidSize(availableSizes)) {
             return res.status(400).send({ status: false, message: `Please Enter Valid Product Available Sizes` })
         }
+        if(availableSizes) availableSizes = validator.isValidSize(availableSizes);
 
         //  Validate Installments
         if (installments && !validator.isvalidNum(installments)) {
@@ -122,10 +125,10 @@ const createProduct = async (req, res) => {
         const newProduct = await productModel.create(finalData);
         return res.status(201).send({ status: true, message: 'Product Created Successfully', data: newProduct })
 
-    } catch (err) {
-        console.log("This is the error :", err.message)
-        res.status(500).send({ msg: "Error", error: err.message })
-    }
+    // } catch (err) {
+    //     console.log("This is the error :", err.message)
+    //     res.status(500).send({ msg: "Error", error: err.message })
+    // }
 };
 
 //------------------ GETTING PRODUCT
@@ -137,9 +140,9 @@ const getProducts = async (req, res) => {
         const reqQuery = JSON.parse(JSON.stringify(req.query));
 
         // check query coming or not
-        if (!validator.isValidBody(reqQuery)) {
-            return res.status(400).send({ status: false, msg: "Request Params should not be empty" });
-        }
+        // if (!validator.isValidBody(reqQuery)) {
+        //     return res.status(400).send({ status: false, msg: "Request Params should not be empty" });
+        // }
 
         // Destructure reqQuery
         const { size, name, priceGreaterThan, priceLessThan, priceSort } = reqQuery
@@ -152,7 +155,7 @@ const getProducts = async (req, res) => {
             if (!validator.isValidSize(size)) {
                 return res.status(400).send({ status: false, message: `Please Enter Valid Product Available Sizes` })
             }
-            filters.size = { $in: size };
+            filters.availableSizes = { $in: size };
         }
 
         // Check name is valid or not
@@ -160,7 +163,7 @@ const getProducts = async (req, res) => {
             if (!validator.isValidString(name)) {
                 return res.status(400).send({ status: false, message: `Please Enter Valid Product Name` })
             }
-            filters.name = { $regex: name, $options: "i" } // options for case sensitive and regex is for finding one sentence also
+            filters.title = { $regex: name, $options: "i" } // options for case sensitive and regex is for finding one sentence also
         }
 
 
@@ -184,7 +187,7 @@ const getProducts = async (req, res) => {
                 filter.$lt = priceLessThan
 
             }
-            filters.price = filter;
+            filters.price = filter; // price:{ $gt:greaterPrice, $lt:lessPrice }
         }
 
         // console.log(filters)
@@ -198,7 +201,7 @@ const getProducts = async (req, res) => {
             sort.price = priceSort
         }
 
-        // console.log(filters);
+        console.log(filters);
 
         // Now get products by calling in DB
         let dataByFilter = await productModel.find(filters).sort(sort)
@@ -397,9 +400,7 @@ const deleteProductById = async (req, res) => {
         return res.status(200).send({ status: true, message: "Product Deleted Successfully", data: deletedProduct })
 
     } catch (err) {
-        return res
-            .status(500)
-            .send({ status: false, message: err.message })
+        return res.status(500).send({ status: false, message: err.message })
     }
 
 };
@@ -411,4 +412,20 @@ module.exports = {
     getProductsById,
     updateProductById,
     deleteProductById
+}
+
+
+
+
+
+
+const isValidSize = (Arr) => {
+    let newArr = []
+    if (Arr.length === 0){return false};
+
+    for (let i = 0; i < Arr.length; i++) {
+        if (!["S", "XS", "M", "X", "L", "XXL", "XL"].includes(Arr[i])) {return false;}
+        newArr.push(Arr[i])
+    }
+    return newArr
 }

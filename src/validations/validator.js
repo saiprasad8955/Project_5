@@ -60,14 +60,26 @@ const isValidPincode = function (value) {
 }
 
 const isValidPrice = function (value) {
-    if (!/^[0-9]+$/.test(value)) {
-        return false
-    }
-    return true
+    if (/^\d+(\.\d{1,2})?$/.test(value)) return true
+    return false
 }
 
-const isValidSize = function (value) {
-    return ["S", "XS", "M", "X", "L", "XXL", "XL"].indexOf(value) !== -1
+// const isValidSize = function (value) {
+//     return ["S", "XS", "M", "X", "L", "XXL", "XL"].indexOf(value) !== -1
+// }
+
+
+const isValidSize = (Arr) => {
+  let newArr = []
+  if (Arr.length === 0){return false};
+  let brr = Arr[0].split(',')
+//   console.log(brr)
+  for (let i = 0; i < brr.length; i++) {       
+      if (!["S", "XS", "M", "X", "L", "XXL", "XL"].includes(brr[i].toUpperCase())) {return false;}
+      newArr.push(brr[i].toUpperCase())
+  }
+//   console.log(newArr)
+  return newArr
 }
 
 const isvalidCurrencyId = function (currencyId) {
@@ -103,6 +115,7 @@ const isValidBoolean = (value) => {
 }
 
 module.exports = {
+
     isValid,
     isValidBody,
     isValidobjectId,
@@ -121,4 +134,5 @@ module.exports = {
     isValidStatus,
     isValidImage,
     isValidBoolean
+    
 }
