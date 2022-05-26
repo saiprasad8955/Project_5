@@ -413,19 +413,3 @@ module.exports = {
     updateProductById,
     deleteProductById
 }
-
-
-
-
-
-
-const isValidSize = (Arr) => {
-    let newArr = []
-    if (Arr.length === 0){return false};
-
-    for (let i = 0; i < Arr.length; i++) {
-        if (!["S", "XS", "M", "X", "L", "XXL", "XL"].includes(Arr[i])) {return false;}
-        newArr.push(Arr[i])
-    }
-    return newArr
-}
