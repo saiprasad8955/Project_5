@@ -138,7 +138,8 @@ const createUser = async function (req, res) {
             let uploadedFileURL = await uploadFile(files[0]);
 
             // encrypted password
-            const encryptPassword = await bcrypt.hash(password, 10)
+            const salt  = await bcrypt.genSalt(10)
+            const encryptPassword = await bcrypt.hash(password, salt)
 
             profileImage = uploadedFileURL
 
