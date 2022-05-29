@@ -5,8 +5,6 @@ const { is } = require("express/lib/request");
 
 
 //------------------ CREATING PRODUCT-------------------------------------------------//
-
-
 const createProduct = async (req, res) => {
     try {
 
@@ -134,8 +132,6 @@ const createProduct = async (req, res) => {
 
 
 //------------------ GETTING PRODUCT-------------------------------------------------//
-
-
 const getProducts = async (req, res) => {
 
     try {
@@ -214,9 +210,7 @@ const getProducts = async (req, res) => {
     }
 };
 
-//----------------------------------- GETTING PRODUCT BY ID ---------------------------------//
-
-
+//------------------ GETTING PRODUCT BY ID ---------------------------------//
 const getProductsById = async (req, res) => {
 
     try {
@@ -250,7 +244,6 @@ const getProductsById = async (req, res) => {
 
 
 //------------------ UPDATING PRODUCT BY ID --------------------------------------------------------//
-
 const updateProductById = async (req, res) => {
 
     try {
@@ -389,7 +382,6 @@ const updateProductById = async (req, res) => {
 };
 
 //------------------ DELETING PRODUCT------------------------------------------------------//
-
 const deleteProductById = async (req, res) => {
 
     try {
