@@ -5,8 +5,6 @@ const { is } = require("express/lib/request");
 
 
 //------------------ CREATING PRODUCT-------------------------------------------------//
-
-
 const createProduct = async (req, res) => {
     try {
 
@@ -99,7 +97,6 @@ const createProduct = async (req, res) => {
             return res.status(400).send({ status: false, message: `Please Enter Valid Product Style` })
         }
 
-        // console.log(validator.isValidSize(availableSizes))
         // Validate the Available Sizes 
         if (availableSizes && !validator.isValidSize(availableSizes)) {
             return res.status(400).send({ status: false, message: `Please Enter Valid Product Available Sizes` })
@@ -128,23 +125,13 @@ const createProduct = async (req, res) => {
         return res.status(201).send({ status: true, message: 'Product Created Successfully', data: newProduct })
 
     } catch (err) {
-        console.log("This is the error :", err.message)
+        console.log("This is the error : ", err.message)
         res.status(500).send({ msg: "Error", error: err.message })
     }
 };
 
 
-
-
-
-
-
-
-
-
 //------------------ GETTING PRODUCT-------------------------------------------------//
-
-
 const getProducts = async (req, res) => {
 
     try {
@@ -152,22 +139,19 @@ const getProducts = async (req, res) => {
         // check request params 
         const reqQuery = JSON.parse(JSON.stringify(req.query));
 
-        // check query coming or not
-        // if (!validator.isValidBody(reqQuery)) {
-        //     return res.status(400).send({ status: false, msg: "Request Params should not be empty" });
-        // }
-
         // Destructure reqQuery
-        const { size, name, priceGreaterThan, priceLessThan, priceSort } = reqQuery
+        let { size, name, priceGreaterThan, priceLessThan, priceSort } = reqQuery
 
         // Create filter Query
         let filters = { isDeleted: false, deletedAt: null }
 
         // Check size is valid or not
         if (size) {
+            size = [size].flat()
             if (!validator.isValidSize(size)) {
                 return res.status(400).send({ status: false, message: `Please Enter Valid Product Available Sizes` })
             }
+            size = validator.isValidSize(size)
             filters.availableSizes = { $in: size };
         }
 
@@ -226,17 +210,7 @@ const getProducts = async (req, res) => {
     }
 };
 
-
-
-
-
-
-
-
-
-//----------------------------------- GETTING PRODUCT BY ID ---------------------------------//
-
-
+//------------------ GETTING PRODUCT BY ID ---------------------------------//
 const getProductsById = async (req, res) => {
 
     try {
@@ -269,17 +243,7 @@ const getProductsById = async (req, res) => {
 };
 
 
-
-
-
-
-
-
-
-
-
 //------------------ UPDATING PRODUCT BY ID --------------------------------------------------------//
-
 const updateProductById = async (req, res) => {
 
     try {
@@ -316,9 +280,17 @@ const updateProductById = async (req, res) => {
 
         // Check title is valid or not
         if (title) {
+
             if (!validator.isValidString(title)) {
                 return res.status(400).send({ status: false, message: `Please Enter Valid Product Title` })
             }
+
+            // Check Duplicate title is present or not
+            let duplicateTitle = await productModel.findOne({ title: title, isDeleted: false })
+            if (duplicateTitle) {
+                return res.status(400).send({ status: false, message: `Product Already Exists with this title` })
+            }
+
             updatedProductData.title = title;
         }
 
@@ -360,10 +332,14 @@ const updateProductById = async (req, res) => {
         // Check Available Sizes is Valid or not
         if (availableSizes) {
 
+            if (!Array.isArray(availableSizes)) {
+                return res.status(400).send({ status: false, data: "sizes must be an Array" })
+            }
+
             if (!validator.isValidSize(availableSizes)) {
                 return res.status(400).send({ status: false, message: `Please Enter Valid Product Available Sizes` })
             }
-            updatedProductData.availableSizes = availableSizes;
+            updatedProductData.availableSizes = validator.isValidSize(availableSizes);
         }
 
         // Check Available Sizes is Valid or not
@@ -405,20 +381,7 @@ const updateProductById = async (req, res) => {
     }
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
 //------------------ DELETING PRODUCT------------------------------------------------------//
-
 const deleteProductById = async (req, res) => {
 
     try {
@@ -451,7 +414,6 @@ const deleteProductById = async (req, res) => {
     }
 
 };
-
 
 module.exports = {
     createProduct,

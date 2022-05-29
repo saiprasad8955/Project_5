@@ -11,6 +11,7 @@ const cartModel = require('../models/cartModel')
 
 const createCart = async (req, res) => {
     try {
+
         // Validate body
         const body = req.body
         if (!validator.isValidBody(body)) {

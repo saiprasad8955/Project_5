@@ -4,7 +4,7 @@ const authentication = async (req, res, next) => {
 
         let token1 = req.headers['authorization']
         if (!token1) {
-            return res.status(400).send({ status: false, msg: "Authentication token is required" })
+            return res.status(401).send({ status: false, msg: "Authentication token is required" })
         } else {
             let token2 = token1.split(' ')
             let token = token2[1]
@@ -26,4 +26,4 @@ const authentication = async (req, res, next) => {
 };
 
 
-module.exports = { authentication}
+module.exports = { authentication }
