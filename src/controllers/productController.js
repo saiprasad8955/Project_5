@@ -99,13 +99,7 @@ const createProduct = async (req, res) => {
         return res.status(400).send({ status: false, message: `Please Enter Valid Product Style` })
     }
 
-        // console.log(validator.isValidSize(availableSizes))
-        // Validate the Available Sizes 
-        if (availableSizes && !validator.isValidSize(availableSizes)) {
-            return res.status(400).send({ status: false, message: `Please Enter Valid Product Available Sizes` })
-        }
-        if (availableSizes) availableSizes = validator.isValidSize(availableSizes);
-
+    // Validate the Available Sizes 
     if (availableSizes && !validator.isValidSize(availableSizes)) {
         return res.status(400).send({ status: false, message: `Please Enter Valid Product Available Sizes` })
     }
@@ -139,14 +133,6 @@ const createProduct = async (req, res) => {
 };
 
 
-
-
-
-
-
-
-
-
 //------------------ GETTING PRODUCT-------------------------------------------------//
 
 
@@ -156,11 +142,6 @@ const getProducts = async (req, res) => {
 
         // check request params 
         const reqQuery = JSON.parse(JSON.stringify(req.query));
-
-        // check query coming or not
-        // if (!validator.isValidBody(reqQuery)) {
-        //     return res.status(400).send({ status: false, msg: "Request Params should not be empty" });
-        // }
 
         // Destructure reqQuery
         let { size, name, priceGreaterThan, priceLessThan, priceSort } = reqQuery
@@ -233,14 +214,6 @@ const getProducts = async (req, res) => {
     }
 };
 
-
-
-
-
-
-
-
-
 //----------------------------------- GETTING PRODUCT BY ID ---------------------------------//
 
 
@@ -274,15 +247,6 @@ const getProductsById = async (req, res) => {
         res.status(500).send({ msg: "Error", error: err.message })
     }
 };
-
-
-
-
-
-
-
-
-
 
 
 //------------------ UPDATING PRODUCT BY ID --------------------------------------------------------//
@@ -424,18 +388,6 @@ const updateProductById = async (req, res) => {
     }
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
 //------------------ DELETING PRODUCT------------------------------------------------------//
 
 const deleteProductById = async (req, res) => {
@@ -470,7 +422,6 @@ const deleteProductById = async (req, res) => {
     }
 
 };
-
 
 module.exports = {
     createProduct,
