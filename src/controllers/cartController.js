@@ -6,7 +6,8 @@ const cartModel = require('../models/cartModel')
 
 
 
-//------------------ CREATING CART ------------------------------------------------------//
+//------------------  POST /users/:userId/cart ------------------------------------------------------//
+
 
 const createCart = async (req, res) => {
     try {
@@ -126,7 +127,16 @@ const createCart = async (req, res) => {
 };
 
 
-//------------------ GETTING CART BY ID ---------------------------------------------------------------//
+
+
+
+
+
+
+
+
+
+//------------------  PUT /users/:userId/cart ---------------------------------------------------------------//
 
 const updateCartById = async (req, res) => {
     try {
@@ -239,68 +249,94 @@ const updateCartById = async (req, res) => {
     }
 };
 
-//------------------ GETTING CART BY ID
+
+
+
+
+
+
+
+
+
+
+
+
+//------------------  GET /users/:userId/cart -----------------------------//
+
 const getCartById = async (req, res) => {
 
-    try{
+    try {
         const userId = req.params.userId
 
         if (!validator.isValidobjectId(userId)) {
             return res.status(400).send({ status: false, message: "Please Provide Valid UserID" })
         }
 
-        const cart = await cartModel.findOne({userId: userId})
-        if(!cart) {
+        const cart = await cartModel.findOne({ userId: userId })
+        if (!cart) {
             return res.status(404).send({ status: false, msg: "Cart is not Exist for this user" });
         }
 
-        const userExist = await userModel.findOne({_id:userId})
-        if(!userExist){
+        const userExist = await userModel.findOne({ _id: userId })
+        if (!userExist) {
             return res.status(404).send({ status: false, msg: "User not found with this Id" });
         }
 
         return res.status(200).send({ status: true, message: "Cart Details", data: cart })
 
-    }catch(err){
+    } catch (err) {
         res.status(500).send({ msg: "Error", error: err.message })
     }
 };
 
 
 
-//------------------ UPDATING CART
+
+
+
+
+
+
+
+
+
+
+//------------------ DELETE /users/:userId/cart -----------------------------------//
+
 const deleteCartById = async (req, res) => {
-    try{
+    try {
         const userId = req.params.userId
 
         if (!validator.isValidobjectId(userId)) {
             return res.status(400).send({ status: false, message: "Please Provide Valid UserID" })
         }
 
-        const cart = await cartModel.findOne({userId: userId})
-        if(!cart) {
+        const cart = await cartModel.findOne({ userId: userId })
+        if (!cart) {
             return res.status(404).send({ status: false, msg: "Cart is not Exist for this user" });
         }
 
-        const userExist = await userModel.findOne({_id:userId})
-        if(!userExist){
+        const userExist = await userModel.findOne({ _id: userId })
+        if (!userExist) {
             return res.status(404).send({ status: false, msg: "User not found with this Id" });
         }
 
-        const cartDeleted = await cartModel.findOneAndUpdate( 
-            {_id: cart._id}, 
-            {$set: {items: [], totalPrice: 0, totalItems: 0 }},
-            {new: true})
+        const cartDeleted = await cartModel.findOneAndUpdate(
+            { _id: cart._id },
+            { $set: { items: [], totalPrice: 0, totalItems: 0 } },
+            { new: true })
 
 
         return res.status(200).send({ status: true, message: "Cart Deleted Successfully", data: cartDeleted })
 
-    }catch(err){
+    } catch (err) {
         res.status(500).send({ msg: "Error", error: err.message })
     }
 
 
 };
+
+
 
 
 module.exports = {

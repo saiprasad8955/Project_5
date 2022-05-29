@@ -4,7 +4,9 @@ const { uploadFile } = require('../AWS_Upload/aws_s3');
 const { is } = require("express/lib/request");
 
 
-//------------------ CREATING PRODUCT
+//------------------ CREATING PRODUCT-------------------------------------------------//
+
+
 const createProduct = async (req, res) => {
     try {
 
@@ -97,11 +99,12 @@ const createProduct = async (req, res) => {
         return res.status(400).send({ status: false, message: `Please Enter Valid Product Style` })
     }
 
-    // console.log(validator.isValidSize(availableSizes))
-    // Validate the Available Sizes and must be an array
-    if (availableSizes && !Array.isArray(availableSizes)) {
-        return res.status(400).send({ status: false, data: "sizes must be an Array" })
-    }
+        // console.log(validator.isValidSize(availableSizes))
+        // Validate the Available Sizes 
+        if (availableSizes && !validator.isValidSize(availableSizes)) {
+            return res.status(400).send({ status: false, message: `Please Enter Valid Product Available Sizes` })
+        }
+        if (availableSizes) availableSizes = validator.isValidSize(availableSizes);
 
     if (availableSizes && !validator.isValidSize(availableSizes)) {
         return res.status(400).send({ status: false, message: `Please Enter Valid Product Available Sizes` })
@@ -135,7 +138,18 @@ const createProduct = async (req, res) => {
     }
 };
 
-//------------------ GETTING PRODUCT
+
+
+
+
+
+
+
+
+
+//------------------ GETTING PRODUCT-------------------------------------------------//
+
+
 const getProducts = async (req, res) => {
 
     try {
@@ -219,7 +233,17 @@ const getProducts = async (req, res) => {
     }
 };
 
-//------------------ GETTING PRODUCT BY ID
+
+
+
+
+
+
+
+
+//----------------------------------- GETTING PRODUCT BY ID ---------------------------------//
+
+
 const getProductsById = async (req, res) => {
 
     try {
@@ -251,7 +275,18 @@ const getProductsById = async (req, res) => {
     }
 };
 
-//------------------ UPDATING PRODUCT BY ID
+
+
+
+
+
+
+
+
+
+
+//------------------ UPDATING PRODUCT BY ID --------------------------------------------------------//
+
 const updateProductById = async (req, res) => {
 
     try {
@@ -389,7 +424,20 @@ const updateProductById = async (req, res) => {
     }
 };
 
-//------------------ DELETING PRODUCT
+
+
+
+
+
+
+
+
+
+
+
+
+//------------------ DELETING PRODUCT------------------------------------------------------//
+
 const deleteProductById = async (req, res) => {
 
     try {
