@@ -71,7 +71,7 @@ const isValidPrice = function (value) {
 
 const isValidSize = (Arr) => {
   let newArr = []
-  if (Arr.length === 0){return false};
+  if (Arr.length === 0){ return false };
   let brr = Arr[0].split(',')
 //   console.log(brr)
   for (let i = 0; i < brr.length; i++) {       
