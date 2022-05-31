@@ -379,23 +379,23 @@ Refer below sample
 
 ## Response
 
-### Successful Response structure
-```yaml
-{
-  status: true,
-  message: 'Success',
-  data: {
+  ### Successful Response structure
+  ```yaml
+  {
+    status: true,
+    message: 'Success',
+    data: {
 
+    }
   }
-}
-```
-### Error Response structure
-```yaml
-{
-  status: false,
-  message: ""
-}
-```
+  ```
+  ### Error Response structure
+  ```yaml
+  {
+    status: false,
+    message: ""
+  }
+  ```
 
 ## Collections
 ## users
