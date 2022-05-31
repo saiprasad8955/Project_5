@@ -165,9 +165,9 @@ const updateCartById = async (req, res) => {
         }
 
         // AUTHORISATION
-        if (userId !== req.user.userId) {
-            return res.status(401).send({ status: false, msg: "Unauthorised access" })
-        }
+        // if (userId !== req.user.userId) {
+        //     return res.status(401).send({ status: false, msg: "Unauthorised access" })
+        // }
 
         const { cartId, productId, removeProduct } = body
 
