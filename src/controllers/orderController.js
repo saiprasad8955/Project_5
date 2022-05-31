@@ -34,17 +34,17 @@ const placeOrder = async (req, res) => {
         //     return res.status(401).send({ status: false, msg: "Unauthorised access" })
         // }
 
-        const { cancellable, status, deletedAt, isDeleted } = body
+        const { cartId, cancellable, status, deletedAt, isDeleted } = body
 
-        // // Validate cartId
-        // if (!validator.isValid(cartId)) {
-        //     return res.status(400).send({ status: false, msg: "cartId must be present" })
-        // }
+        // Validate cartId
+        if (!validator.isValid(cartId)) {
+            return res.status(400).send({ status: false, msg: "cartId must be present" })
+        }
 
-        // // Validation of cartId
-        // if (!validator.isValidobjectId(cartId)) {
-        //     return res.status(400).send({ status: false, msg: "Invalid cartId" })
-        // }
+        // Validation of cartId
+        if (!validator.isValidobjectId(cartId)) {
+            return res.status(400).send({ status: false, msg: "Invalid cartId" })
+        }
 
         const userSearch = await userModel.findOne({ _id: userId })
         if (!userSearch) {

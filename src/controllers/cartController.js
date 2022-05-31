@@ -27,7 +27,7 @@ const createCart = async (req, res) => {
         // Validate params
         const userId = req.params.userId;
         if (!validator.isValidobjectId(userId)) {
-            return res.status(400).send({ status: false, msg: "Invalid parameters" });
+            return res.status(400).send({ status: false, msg: "Invalid UserId" });
         }
 
         const userSearch = await userModel.findById({ _id: userId })
@@ -36,9 +36,9 @@ const createCart = async (req, res) => {
         }
 
         // AUTHORISATION
-        // if (userId !== req.user.userId) {
-        //     return res.status(401).send({ status: false, msg: "Unauthorised access" })
-        // }
+        if (userId !== req.user.userId) {
+            return res.status(401).send({ status: false, msg: "Unauthorised access" })
+        }
 
 
         const { items } = body
@@ -165,9 +165,9 @@ const updateCartById = async (req, res) => {
         }
 
         // AUTHORISATION
-        // if (userId !== req.user.userId) {
-        //     return res.status(401).send({ status: false, msg: "Unauthorised access" })
-        // }
+        if (userId !== req.user.userId) {
+            return res.status(401).send({ status: false, msg: "Unauthorised access" })
+        }
 
         const { cartId, productId, removeProduct } = body
 
@@ -264,27 +264,46 @@ const updateCartById = async (req, res) => {
 //------------------  GET /users/:userId/cart -----------------------------//
 
 const getCartById = async (req, res) => {
-
     try {
-        const userId = req.params.userId
+        // Validate of body(It must not be present)
+        const body = req.body;
+        if (validator.isValidBody(body)) {
+            return res.status(400).send({ status: false, msg: "Body must not be present" })
+        }
 
+        // Validate query (it must not be present)
+        const query = req.query;
+        if (validator.isValidBody(query)) {
+            return res.status(400).send({ status: false, msg: "Query must not be present" });
+        }
+
+        // Validate params
+        userId = req.params.userId
         if (!validator.isValidobjectId(userId)) {
-            return res.status(400).send({ status: false, message: "Please Provide Valid UserID" })
+            return res.status(400).send({ status: false, msg: `${userId} is invalid` })
         }
 
-        const cart = await cartModel.findOne({ userId: userId })
-        if (!cart) {
-            return res.status(404).send({ status: false, msg: "Cart is not Exist for this user" });
+        // to check user present or not
+        const userSearch = await userModel.findById({ _id: userId })
+        if (!userSearch) {
+            return res.status(400).send({ status: false, msg: "userId does not exist" })
         }
 
-        const userExist = await userModel.findOne({ _id: userId })
-        if (!userExist) {
-            return res.status(404).send({ status: false, msg: "User not found with this Id" });
+        // AUTHORISATION
+        if (userId !== req.user.userId) {
+            return res.status(401).send({ status: false, msg: "Unauthorised access" })
         }
 
-        return res.status(200).send({ status: true, message: "Cart Details", data: cart })
+        // To check cart is present or not
+        const cartSearch = await cartModel.findOne({ userId })
+        if (!cartSearch) {
+            return res.status(400).send({ status: true, msg: "UserId does not exist" })
+        }
+        return res.status(200).send({ status: true, msg: "Success", data: cartSearch })
 
-    } catch (err) {
+    }
+    catch (err) {
+        console.log("This is the error :", err.message)
         res.status(500).send({ msg: "Error", error: err.message })
     }
 };
@@ -305,34 +324,49 @@ const getCartById = async (req, res) => {
 
 const deleteCartById = async (req, res) => {
     try {
-        const userId = req.params.userId
+        // Validate body (it must not be present)
+        const body = req.body
+        if (validator.isValidBody(body)) {
+            return res.status(400).send({ status: false, msg: "Invalid parametes" })
+        }
 
+        // Validate query (it must not be present)
+        const query = req.query;
+        if (validator.isValidBody(query)) {
+            return res.status(400).send({ status: false, msg: "Invalid parameters" });
+        }
+
+        // Validate params
+        userId = req.params.userId
         if (!validator.isValidobjectId(userId)) {
-            return res.status(400).send({ status: false, message: "Please Provide Valid UserID" })
+            return res.status(400).send({ status: false, msg: `${userId} is invalid` })
         }
 
-        const cart = await cartModel.findOne({ userId: userId })
-        if (!cart) {
-            return res.status(404).send({ status: false, msg: "Cart is not Exist for this user" });
+        //  To check user is present or not
+        const userSearch = await userModel.findById({ _id: userId })
+        if (!userSearch) {
+            return res.status(404).send({ status: false, msg: "User doesnot exist" })
         }
 
-        const userExist = await userModel.findOne({ _id: userId })
-        if (!userExist) {
-            return res.status(404).send({ status: false, msg: "User not found with this Id" });
+        // AUTHORISATION
+        if (userId !== req.user.userId) {
+            return res.status(401).send({ status: false, msg: "Unauthorised access" })
         }
 
-        const cartDeleted = await cartModel.findOneAndUpdate(
-            { _id: cart._id },
-            { $set: { items: [], totalPrice: 0, totalItems: 0 } },
-            { new: true })
+        // To check cart is present or not
+        const cartSearch = await cartModel.findOne({ userId })
+        if (!cartSearch) {
+            return res.status(404).send({ status: false, msg: "cart doesnot exist" })
+        }
 
+        const cartdelete = await cartModel.findOneAndUpdate({ userId }, { items: [], totalItems: 0, totalPrice: 0 }, { new: true })
+        res.status(200).send({ status: true, msg: "Cart deleted" })
 
-        return res.status(200).send({ status: true, message: "Cart Deleted Successfully", data: cartDeleted })
-
-    } catch (err) {
+    }
+    catch (err) {
+        console.log("This is the error :", err.message)
         res.status(500).send({ msg: "Error", error: err.message })
     }
-
 
 };
 

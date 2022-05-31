@@ -1,3 +1,6 @@
+
+const jwt = require('jsonwebtoken')
+
 // AUTHENTICATION
 const authentication = async (req, res, next) => {
     try {

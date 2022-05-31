@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt')
 const { uploadFile } = require('../AWS_Upload/aws_s3')
 const jwt = require('jsonwebtoken')
 
+
 /////////////////////////////////  CREATING USER  /////////////////////////////////////////////
 
 
@@ -138,7 +139,7 @@ const createUser = async function (req, res) {
             let uploadedFileURL = await uploadFile(files[0]);
 
             // encrypted password
-            const salt  = await bcrypt.genSalt(10)
+            const salt = await bcrypt.genSalt(10)
             const encryptPassword = await bcrypt.hash(password, salt)
 
             profileImage = uploadedFileURL
@@ -259,23 +260,23 @@ const getUserById = async (req, res) => {
         }
 
         // Validate params
-        const params = req.params;
-        if (!validator.isValidBody(params)) {
+        userId = req.params.userId
+        if (!validator.isValidBody(userId)) {
             return res.status(400).send({ status: false, msg: "Credentials are required" })
         }
 
-
-        let userId = req.params.userId
-
-        //   console.log(req.user.userId)
-        //     // if (req.user.userId != params.userId) {
-        //     //     return res.status(401).send({ status: false, msg: "UserId doesnot match" })
-        //     // }
 
 
         if (!validator.isValidobjectId(userId)) {
             return res.status(400).send({ status: false, msg: "UserId is Not Vaild" })
         }
+
+
+        //AUTHORISATION
+        if (userId !== req.user.userId) {
+            return res.status(401).send({ status: false, msg: "Unauthorised access" })
+        }
+
 
         let findUser = await UserModel.findOne({ _id: userId })
         if (!findUser) {
@@ -316,10 +317,10 @@ const updateUserById = async (req, res) => {
             return res.status(404).send({ status: false, msg: "User does not exist" })
         }
 
-        // AUTHORISATION
-        // if (userId !== req.user.userId) {
-        //     return res.status(401).send({ status: false, msg: "Unauthorised access" })
-        // }
+        //AUTHORISATION
+        if (userId !== req.user.userId) {
+            return res.status(401).send({ status: false, msg: "Unauthorised access" })
+        }
 
         let { fname, lname, email, phone, password, address, profileImage } = body;
 
