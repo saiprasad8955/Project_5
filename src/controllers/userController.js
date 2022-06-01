@@ -301,7 +301,8 @@ const getUserById = async (req, res) => {
 const updateUserById = async (req, res) => {
     try {
         // Validate body
-        const body = req.body
+        const body = JSON.parse(JSON.stringify(req.body))
+
         if (!validator.isValidBody(body)) {
             return res.status(400).send({ status: false, msg: "Details must be present to update" })
         }
@@ -377,7 +378,7 @@ const updateUserById = async (req, res) => {
             updatedData['password'] = encrypt
         }
 
-
+        address = JSON.parse(address)
         //Updating the Address
         if (address) {
             if (address.shipping) {
