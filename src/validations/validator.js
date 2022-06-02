@@ -80,7 +80,7 @@ const isValidSize = (Arr) => {
         newArr.push(brr[i].toUpperCase())
     }
     //   console.log(newArr)
-    return newArr
+      return newArr
 }
 
 const isvalidCurrencyId = function (currencyId) {

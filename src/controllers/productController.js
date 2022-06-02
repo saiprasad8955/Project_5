@@ -97,28 +97,30 @@ const createProduct = async (req, res) => {
             return res.status(400).send({ status: false, message: `Please Enter Valid Product Style` })
         }
 
+        if( ! Array.isArray(availableSizes)){
+            return res.status(400).send({ status: false, message: `Available Sizes Must be an Type Of Array` })
+        }
         // Validate the Available Sizes 
-        if (availableSizes && !validator.isValidSize(availableSizes)) {
+        if (availableSizes && ! validator.isValidSize(availableSizes)) {
             return res.status(400).send({ status: false, message: `Please Enter Valid Product Available Sizes` })
         }
-        if (availableSizes) availableSizes = validator.isValidSize(availableSizes);
 
         //  Validate Installments
-        if (installments && !validator.isvalidNum(installments)) {
-            return res.status(400).send({ status: false, message: `Please Enter Valid Product Installments` })
+        if((installments) &&  (! validator.isValidNumber(installments) || parseInt(installments) < 0) ){
+            return res.status(400).send({status: false , message: 'please enter valid installments'})
         }
 
         // Create a new Object and set all things
         let finalData = {
-            title,
-            description,
-            price,
-            currencyId,
-            currencyFormat,
-            productImage: uploadedFileURL,
-            style,
-            availableSizes,
-            installments
+        title,
+        description,
+        price,
+        currencyId,
+        currencyFormat,
+        productImage: uploadedFileURL,
+        style,
+        availableSizes : validator.isValidSize(availableSizes) ,
+        installments
         }
 
         const newProduct = await productModel.create(finalData);
