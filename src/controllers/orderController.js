@@ -28,7 +28,7 @@ const placeOrder = async (req, res) => {
         }
 
         // // AUTHORISATION
-        if (userId !== req.user.userId) {
+        if (userId !== req.userId) {
             return res.status(401).send({ status: false, msg: "Unauthorised access" })
         }
 
