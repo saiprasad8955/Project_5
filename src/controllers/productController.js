@@ -97,16 +97,23 @@ const createProduct = async (req, res) => {
             return res.status(400).send({ status: false, message: `Please Enter Valid Product Style` })
         }
 
+        // check availableSizes Coming or not
+        if(!availableSizes || ! body.hasOwnProperty("availableSizes")){
+            return res.status(400).send({ status: false, message: `Please Provide at least One Available Size` })
+        }
+
+        // check type available sizes must be an array
         if( ! Array.isArray(availableSizes)){
             return res.status(400).send({ status: false, message: `Available Sizes Must be an Type Of Array` })
         }
+
         // Validate the Available Sizes 
         if (availableSizes && ! validator.isValidSize(availableSizes)) {
             return res.status(400).send({ status: false, message: `Please Enter Valid Product Available Sizes` })
         }
 
         //  Validate Installments
-        if((installments) &&  (! validator.isValidNumber(installments) || parseInt(installments) < 0) ){
+        if((installments) &&  (! validator.isvalidNum(installments) || ( parseInt(installments) < 0 ) ) ){
             return res.status(400).send({ status: false , message: 'Please Enter Valid Installments'})
         }
 
@@ -266,7 +273,7 @@ const updateProductById = async (req, res) => {
 
         // Validate product ID
         if (!validator.isValidobjectId(productId)) {
-            return res.status(404).send({ status: false, message: "Product ID Not Valid" });
+            return res.status(400).send({ status: false, message: "Product ID Not Valid" });
         }
 
         // Check product exists or not and should not be deleted
@@ -335,7 +342,7 @@ const updateProductById = async (req, res) => {
         if (availableSizes) {
 
             if (!Array.isArray(availableSizes)) {
-                return res.status(400).send({ status: false, data: "sizes must be an Array" })
+                return res.status(400).send({ status: false, data: "Available Sizes Must be an Type Of Array" })
             }
 
             if (!validator.isValidSize(availableSizes)) {

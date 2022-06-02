@@ -273,7 +273,7 @@ const getUserById = async (req, res) => {
 
 
         //AUTHORISATION
-        if (userId !== req.user.userId) {
+        if (userId !== req.userId) {
             return res.status(401).send({ status: false, msg: "Unauthorised access" })
         }
 
@@ -319,7 +319,7 @@ const updateUserById = async (req, res) => {
         }
 
         //AUTHORISATION
-        if (userId !== req.user.userId) {
+        if (userId !== req.userId) {
             return res.status(401).send({ status: false, msg: "Unauthorised access" })
         }
 

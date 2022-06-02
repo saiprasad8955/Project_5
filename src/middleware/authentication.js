@@ -14,7 +14,7 @@ const authentication = async (req, res, next) => {
 
             let decodedToken = jwt.verify(token, "Group8")
             if (decodedToken) {
-                req.user = decodedToken
+                req.userId = decodedToken.userId
                 next()
             }
             else {

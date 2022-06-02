@@ -36,7 +36,7 @@ const createCart = async (req, res) => {
         }
 
         // AUTHORISATION
-        if (userId !== req.user.userId) {
+        if (userId !== req.userId) {
             return res.status(401).send({ status: false, msg: "Unauthorised access" })
         }
 
@@ -165,7 +165,7 @@ const updateCartById = async (req, res) => {
         }
 
         // AUTHORISATION
-        if (userId !== req.user.userId) {
+        if (userId !== req.userId) {
             return res.status(401).send({ status: false, msg: "Unauthorised access" })
         }
 
@@ -290,7 +290,7 @@ const getCartById = async (req, res) => {
         }
 
         // AUTHORISATION
-        if (userId !== req.user.userId) {
+        if (userId !== req.userId) {
             return res.status(401).send({ status: false, msg: "Unauthorised access" })
         }
 
@@ -349,7 +349,7 @@ const deleteCartById = async (req, res) => {
         }
 
         // AUTHORISATION
-        if (userId !== req.user.userId) {
+        if (userId !== req.userId) {
             return res.status(401).send({ status: false, msg: "Unauthorised access" })
         }
 
