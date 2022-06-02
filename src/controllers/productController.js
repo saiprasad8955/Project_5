@@ -251,7 +251,6 @@ const getProductsById = async (req, res) => {
     }
 };
 
-
 //------------------ UPDATING PRODUCT BY ID --------------------------------------------------------//
 const updateProductById = async (req, res) => {
 

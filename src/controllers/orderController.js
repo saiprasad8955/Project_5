@@ -4,7 +4,6 @@ const OrderModel = require("../models/orderModel")
 const validator = require("../validations/validator")
 
 
-
 //------------------  POST /users/:userId/orders -----------------------------------------//
 
 const placeOrder = async (req, res) => {
@@ -28,11 +27,10 @@ const placeOrder = async (req, res) => {
             return res.status(400).send({ status: false, msg: "Invalid parameters" });
         }
 
-
         // // AUTHORISATION
-        // if (userId !== req.user.userId) {
-        //     return res.status(401).send({ status: false, msg: "Unauthorised access" })
-        // }
+        if (userId !== req.user.userId) {
+            return res.status(401).send({ status: false, msg: "Unauthorised access" })
+        }
 
         const { cartId, cancellable, status, deletedAt, isDeleted } = body
 
@@ -81,18 +79,7 @@ const placeOrder = async (req, res) => {
     }
 };
 
-
-
-
-
-
-
-
-
-
 //------------------ PUT /users/:userId/orders------------------------------------------------//
-
-
 
 const updateOrderById = async (req, res) => {
     try {
@@ -121,9 +108,9 @@ const updateOrderById = async (req, res) => {
         }
 
         // // AUTHORISATION
-        // if (userId !== req.user.userId) {
-        //     return res.status(401).send({ status: false, msg: "Unauthorised access" })
-        // }
+        if (userId !== req.userId) {
+            return res.status(401).send({ status: false, msg: "Unauthorised access" })
+        }
 
         const { orderId, status } = body
 
@@ -186,7 +173,6 @@ const updateOrderById = async (req, res) => {
     }
 
 };
-
 
 module.exports = {
     placeOrder,
