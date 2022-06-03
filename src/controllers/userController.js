@@ -66,6 +66,12 @@ const createUser = async function (req, res) {
             return res.status(400).send({ status: false, message: "Invalid email id" })
         }
 
+        // check email is unique or not 
+        const emailExists = await UserModel.findOne({ email: email });
+        if (emailExists) {
+            return res.status(400).send({ status: true, msg: "Email Already Exists!! Please Check with Another" })
+        }
+
         // Validate password
         if (!validator.isValid(password)) {
             return res.status(400).send({ status: false, message: "password must be present" })
@@ -86,6 +92,12 @@ const createUser = async function (req, res) {
             return res.status(400).send({ status: false, msg: "Invalid phone number" })
         }
 
+        // check phone is unique or not 
+        const phoneExists = await UserModel.findOne({ phone: phone });
+        if (phoneExists) {
+            return res.status(400).send({ status: true, msg: "Phone Number Already Exists!! Please Check with Another" })
+        }
+        
         address = JSON.parse(address);
 
         // Validate address
