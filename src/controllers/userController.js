@@ -97,7 +97,7 @@ const createUser = async function (req, res) {
         if (phoneExists) {
             return res.status(400).send({ status: true, msg: "Phone Number Already Exists!! Please Check with Another" })
         }
-        
+
         address = JSON.parse(address);
 
         // Validate address
@@ -296,7 +296,7 @@ const getUserById = async (req, res) => {
 
         }
         else {
-            return res.status(200).send({ status: true, msg: "User profile details", data: findUser })
+            return res.status(200).send({ status: true, message: "User profile details", data: findUser })
         }
 
     }
@@ -454,7 +454,7 @@ const updateUserById = async (req, res) => {
             }
         }
         const updated = await UserModel.findOneAndUpdate({ _id: userId }, updatedData, { new: true })
-        return res.status(201).send({ status: true, data: updated })
+        return res.status(200).send({ status: true, message: "User profile updated", data: updated })
     }
     catch (err) {
         console.log("This is the error :", err.message)

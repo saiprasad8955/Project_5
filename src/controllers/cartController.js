@@ -95,7 +95,7 @@ const createCart = async (req, res) => {
 
             // finally create new cart
             const newCart = await cartModel.create(newCartData)
-            return res.status(201).send({ status: true, message: "Cart Successfully Created", data: newCart })
+            return res.status(201).send({ status: true, message: "Success", data: newCart })
         }
 
 
@@ -129,7 +129,7 @@ const createCart = async (req, res) => {
                 { new: true })
 
             // finally send the updated cart 
-            return res.status(200).send({ status: true, msg: "Cart Updated Successfully", data: updatedCart })
+            return res.status(201).send({ status: true, message: "Success", data: updatedCart })
         }
 
 
@@ -143,7 +143,7 @@ const createCart = async (req, res) => {
             { new: true })
 
         // Send Response Of New Added Product in Cart 
-        return res.status(201).send({ status: true, message: "New Item Added in Cart Successfully", data: addNewItem })
+        return res.status(201).send({ status: true, message: "Success", data: addNewItem })
 
 
     } catch (err) {
@@ -151,6 +151,23 @@ const createCart = async (req, res) => {
         res.status(500).send({ msg: "Error", error: err.message })
     }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //------------------  PUT /users/:userId/cart ---------------------------------------------------------------//
@@ -266,7 +283,7 @@ const updateCartById = async (req, res) => {
 
                 }, { new: true })
 
-            return res.status(200).send({ status: true, message: 'Sucessfully Removed Product', data: updatedCart })
+            return res.status(200).send({ status: true, message: 'Sucess', data: updatedCart })
 
 
         }
@@ -284,7 +301,7 @@ const updateCartById = async (req, res) => {
 
                 }, { new: true })
 
-            return res.status(200).send({ status: true, message: 'Sucessfully Removed Product', data: updatedCart })
+            return res.status(200).send({ status: true, message: 'Success', data: updatedCart })
         }
     }
     catch (err) {
@@ -293,6 +310,28 @@ const updateCartById = async (req, res) => {
     }
 
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //------------------  GET /users/:userId/cart -----------------------------//
@@ -341,6 +380,30 @@ const getCartById = async (req, res) => {
         res.status(500).send({ msg: "Error", error: err.message })
     }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //------------------ DELETE /users/:userId/cart -----------------------------------//
 
