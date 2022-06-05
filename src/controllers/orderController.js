@@ -71,7 +71,7 @@ const placeOrder = async (req, res) => {
         }
 
         let createdOrder = await OrderModel.create(order)
-        return res.status(201).send({ status: true, msg: "Success", data: createdOrder })
+        return res.status(201).send({ status: true, message: "Success", data: createdOrder })
     }
     catch (err) {
         console.log("This is the error :", err.message)
@@ -164,7 +164,7 @@ const updateOrderById = async (req, res) => {
 
 
         const orderUpdated = await OrderModel.findOneAndUpdate({ _id: orderId }, { status: status }, { new: true })
-        return res.status(200).send({ status: true, msg: "Order updated successfully", data: orderUpdated })
+        return res.status(200).send({ status: true, message: "Success", data: orderUpdated })
 
     }
     catch (err) {
