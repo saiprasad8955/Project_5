@@ -16,7 +16,7 @@ const createUser = async function (req, res) {
         // const body = req.body.data;
         // const JSONbody = JSON.parse(body)
 
-        //Validate body 
+        // Validate body 
         if (!validator.isValidBody(body)) {
             return res.status(400).send({ status: false, msg: "User body should not be empty" });
         }
